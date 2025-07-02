@@ -1,6 +1,3 @@
-from keep_alive import keep_alive
-
-keep_alive()
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.fsm.storage.memory import MemoryStorage
