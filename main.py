@@ -25,9 +25,9 @@ main_menu = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text="📣 Наш Telegram")]
 ], resize_keyboard=True)
 
-back_menu = ReplyKeyboardMarkup([[KeyboardButton("🔙 Назад")]], resize_keyboard=True)
+back_menu = ReplyKeyboardMarkup([[KeyboardButton(text="🔙 Назад")]], resize_keyboard=True)
 back_ready = ReplyKeyboardMarkup([
-    [KeyboardButton("✅ Готово"), KeyboardButton("🔙 Назад")]
+    [KeyboardButton(text="✅ Готово"), KeyboardButton(text="🔙 Назад")]
 ], resize_keyboard=True)
 
 @router.message(F.text == "/start")
