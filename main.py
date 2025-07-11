@@ -74,7 +74,7 @@ async def strategy_day(message: types.Message):
 @router.message(F.text == "📝 Регистрация")
 async def create_account(message: types.Message):
     await message.answer(
-        "🔑 [Зарегистрируйся](https://1wvteh.com/?p=7bd0) и получи бонус до 30 000₽ — начни путь к профиту!",
+        "🔑 [Зарегистрируйся](https://1wjpvy.life/?p=7bd0) и получи бонус до 30 000₽ — начни путь к профиту!",
         reply_markup=back_ready_menu,
         disable_web_page_preview=True,
         parse_mode='Markdown')
