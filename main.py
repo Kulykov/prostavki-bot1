@@ -20,7 +20,7 @@ router = Router()
 strategies = [ ... ]  # Твой список стратегий
 
 main_menu = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton("📈 Стратегия дня"), KeyboardButton("🎁 Получить купон")],
+    [KeyboardButton("📈 Стратегия дня"), KeyboardButton("text=🎁 Получить купон")],
     [KeyboardButton("🛟 Поддержка"), KeyboardButton("📝 Регистрация")],
     [KeyboardButton("📣 Наш Telegram")]
 ], resize_keyboard=True)
