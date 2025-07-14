@@ -17,7 +17,6 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 
-# --- Стратегии по дням ---
 strategies = [
     "🎯 Ставь на live-тоталы после 10-й минуты — анализируй динамику матча!",
     "📊 Используй догон на ничью в лайве — особенно в равных по силам лигах.",
@@ -36,12 +35,11 @@ strategies = [
     "🧾 Следи за банком — фиксированная ставка = контроль и стабильность."
 ]
 
-# --- Клавиатуры ---
 main_menu = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📈 Стратегия дня"), KeyboardButton(text="🎁 Получить купон")],
         [KeyboardButton(text="🛟 Поддержка"), KeyboardButton(text="📝 Регистрация")],
-        [KeyboardButton(text="📣 Наш Telegram")]
+        [KeyboardButton(text="📣 Наш Telegram"), KeyboardButton(text="🌍 Перейти на сайт")]
     ],
     resize_keyboard=True
 )
@@ -58,7 +56,6 @@ back_ready_menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# --- Обработчики ---
 @router.message(F.text == "/start")
 async def start_cmd(message: types.Message):
     await message.answer(
@@ -74,7 +71,7 @@ async def strategy_day(message: types.Message):
 @router.message(F.text == "📝 Регистрация")
 async def create_account(message: types.Message):
     await message.answer(
-        "🔑 [Зарегистрируйся](https://1wjpvy.life/?p=7bd0) и получи бонус до 30 000₽ — начни путь к профиту!",
+        "🔑 [Зарегистрируйся](https://1wvteh.com/?p=7bd0) и получи бонус до 30 000₽ — начни путь к профиту!",
         reply_markup=back_ready_menu,
         disable_web_page_preview=True,
         parse_mode='Markdown')
@@ -94,6 +91,15 @@ async def channel_link(message: types.Message):
         reply_markup=back_menu,
         disable_web_page_preview=True,
         parse_mode='Markdown')
+
+@router.message(F.text == "🌍 Перейти на сайт")
+async def go_to_site(message: types.Message):
+    await message.answer(
+        "🌐 Переходи на наш обновлённый сайт:\n[Открыть сайт](https://pro-stavki-site.onrender.com/)",
+        reply_markup=back_menu,
+        parse_mode="Markdown",
+        disable_web_page_preview=True
+    )
 
 @router.message(F.text == "🎁 Получить купон")
 async def get_coupon(message: types.Message):
@@ -148,3 +154,4 @@ if __name__ == '__main__':
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         print("Бот остановлен")
+
