@@ -1,2 +1,7 @@
 aiogram==3.5.2
-aiohttp==3.8.4
+aiohttp==3.8.5
+cchardet==2.1.7
+charset-normalizer==3.3.1
+yarl==1.9.2
+multidict==6.0.4
+typing-extensions==4.7.1
