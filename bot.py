@@ -1,16 +1,18 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
 import logging
+import os
 from datetime import datetime
+
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.filters import Command
 
 logging.basicConfig(level=logging.INFO)
 
-import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
-# --- Стратегии ставок на спорт (15 штук) ---
+# --- Стратегии ставок на спорт ---
 sport_strategies = [
     "1️⃣ **Ставка на фору команды А**\nЕсли команда А играет дома против аутсайдера, можно поставить на фору -1. Это даёт выигрыш даже при минимальной победе. Используйте, если команда имеет хорошую форму и статистику побед на домашнем поле.",
     "2️⃣ **Тотал больше 2.5 голов**\nСтавка на то, что обе команды забьют в сумме более 2 голов. Работает на матчах атакующего типа. Проверяйте последние 5-10 игр команд.",
@@ -29,7 +31,7 @@ sport_strategies = [
     "15️⃣ **Ставка на аутсайдера с маленькой форой**\nСтавка на аутсайдера с форой +0.5. Снижается риск, подходит для команд с неплохой игрой против фаворитов."
 ]
 
-# --- Стратегии казино (15 штук) ---
+# --- Стратегии казино ---
 casino_strategies = [
     "1️⃣ **Рулетка: стратегия Мартингейл**\nУдваиваем ставку после каждого проигрыша на равные шансы (чёт/нечёт). Цель — вернуть все потери и получить прибыль после выигрыша. Требуется достаточный банк для серий проигрышей.",
     "2️⃣ **Рулетка: стратегия Лабушер**\nЗаписываем ряд чисел, сумма которых — желаемая прибыль. Ставим сумму первой и последней цифры ряда. Если выиграли — зачёркиваем числа, если проиграли — добавляем сумму в конец ряда.",
@@ -49,26 +51,26 @@ casino_strategies = [
 ]
 
 # --- Главное меню ---
-def main_menu():
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+def main_menu() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(row_width=2)
     buttons = [
-        types.InlineKeyboardButton(text="🎯 Стратегия дня", callback_data="strategy"),
-        types.InlineKeyboardButton(text="🎁 Бонус", callback_data="bonus"),
-        types.InlineKeyboardButton(text="🎮 Игры", callback_data="games"),
-        types.InlineKeyboardButton(text="📢 Наш Telegram", url="https://t.me/ProStavki_365"),
-        types.InlineKeyboardButton(text="🆘 Поддержка", url="https://t.me/ProStavki365"),
+        InlineKeyboardButton(text="🎯 Стратегия дня", callback_data="strategy"),
+        InlineKeyboardButton(text="🎁 Бонус", callback_data="bonus"),
+        InlineKeyboardButton(text="🎮 Игры", callback_data="games"),
+        InlineKeyboardButton(text="📢 Наш Telegram", url="https://t.me/ProStavki_365"),
+        InlineKeyboardButton(text="🆘 Поддержка", url="https://t.me/ProStavki365"),
     ]
     keyboard.add(*buttons)
     return keyboard
 
 # --- Клавиатура возврата ---
-def back_menu():
-    keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(types.InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back"))
+def back_menu() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back"))
     return keyboard
 
 # --- Команда /start ---
-@dp.message_handler(commands=["start"])
+@dp.message(Command(commands=["start"]))
 async def cmd_start(message: types.Message):
     await message.answer(
         "👋 Привет! Добро пожаловать в наш бот.\n\n"
@@ -77,7 +79,7 @@ async def cmd_start(message: types.Message):
     )
 
 # --- Стратегия дня ---
-@dp.callback_query_handler(lambda c: c.data == "strategy")
+@dp.callback_query(lambda c: c.data == "strategy")
 async def strategy_handler(callback: types.CallbackQuery):
     today = datetime.now().day
     sport_strategy = sport_strategies[today % len(sport_strategies)]
@@ -92,45 +94,49 @@ async def strategy_handler(callback: types.CallbackQuery):
     await callback.answer()
 
 # --- Кнопка бонуса ---
-@dp.callback_query_handler(lambda c: c.data == "bonus")
+@dp.callback_query(lambda c: c.data == "bonus")
 async def bonus_handler(callback: types.CallbackQuery):
     bonus_text = (
         "💰 Получай бонус до **15 000 ₽** для ставок на спорт и казино!\n\n"
         "Используй его и увеличь свои шансы на выигрыш! 🎯🎰"
     )
     
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(
-        types.InlineKeyboardButton(text="💎 Забрать бонус", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
-        types.InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back")
+        InlineKeyboardButton(text="💎 Забрать бонус", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
+        InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back")
     )
     
     await callback.message.answer(bonus_text, reply_markup=keyboard)
     await callback.answer()
 
 # --- Кнопка игры ---
-@dp.callback_query_handler(lambda c: c.data == "games")
+@dp.callback_query(lambda c: c.data == "games")
 async def games_handler(callback: types.CallbackQuery):
     text = (
         "🎮 Добро пожаловать в раздел игр!\n\n"
         "Здесь ты можешь выбрать любимую игру и испытать удачу! 🍀"
     )
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(
-        types.InlineKeyboardButton(text="✈️ Aviator", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
-        types.InlineKeyboardButton(text="💣 Mines", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
-        types.InlineKeyboardButton(text="📈 Plinko", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
-        types.InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back")
+        InlineKeyboardButton(text="✈️ Aviator", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
+        InlineKeyboardButton(text="💣 Mines", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
+        InlineKeyboardButton(text="📈 Plinko", url="https://1wtsaw.life/casino/list/4?p=lwpw"),
+        InlineKeyboardButton(text="⬅️ Назад в меню", callback_data="back")
     )
     await callback.message.answer(text, reply_markup=keyboard)
     await callback.answer()
 
 # --- Кнопка возврата ---
-@dp.callback_query_handler(lambda c: c.data == "back")
+@dp.callback_query(lambda c: c.data == "back")
 async def back_handler(callback: types.CallbackQuery):
     await callback.message.answer("Главное меню ⬇️", reply_markup=main_menu())
     await callback.answer()
 
 # --- Запуск бота ---
+async def main():
+    await dp.start_polling(bot)
+
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    import asyncio
+    asyncio.run(main())
