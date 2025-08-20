@@ -5,7 +5,8 @@ from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 
-BOT_TOKEN = "7672403214:AAGeYafr1OsdF2puiEzOyfMyFP8HTKmBta8"
+import os
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 bot = Bot(token=BOT_TOKEN, parse_mode="HTML")
 dp = Dispatcher(bot)
 
